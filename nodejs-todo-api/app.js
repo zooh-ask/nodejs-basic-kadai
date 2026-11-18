@@ -16,7 +16,7 @@ app.post('/todos', async (req, res) => {
   const status = '未着手';
   try {
     const result = await executeQuery(
-      'INSERT INTO todos (title, priority, status) VALUES (?, ?, ?)', [title, priority, '未着手']
+      'INSERT INTO todos (title, priority, status) VALUES (?, ?, ?)', [title, priority, status]
     );
     res.status(201).json({ id: result.insertId, title, priority, status });
   } catch (err) {
@@ -42,7 +42,7 @@ app.put('/todos/:id', async (req, res) => {
     );
     result.affectedRows === 0
       ? res.status(404).json({ error: '更新対象のデータが見つかりません。' })
-      : res.status(200).json({ message: 'データを更新しました。' });
+      : res.status(200).json({ id: Number(req.params.id), title, priority, status });
   } catch (err) {
     handleServerError(res, err, 'データ更新に失敗しました。');
   }
@@ -53,7 +53,7 @@ app.delete('/todos/:id', async (req, res) => {
     const result = await executeQuery('DELETE FROM todos WHERE id = ?;', [req.params.id]);
     result.affectedRows === 0
       ? res.status(404).json({ error: '削除対象のデータが見つかりません。' })
-      : res.status(200).json({ meesage: 'データを削除しました。' });
+      : res.status(200).json({ message: 'データを削除しました。' });
   } catch (err) {
     handleServerError(res, err, 'データ削除に失敗しました。');
   }
